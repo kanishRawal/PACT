@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
+import Link from 'next/link';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,19 +21,19 @@ export default function RootLayout({
         <nav className="border-b border-gray-100 bg-white/80 backdrop-blur-md sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
-              <div className="flex items-center space-x-1">
-                <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+              <Link href="/" className="flex items-center space-x-1 group">
+                <div className="w-8 h-8 rounded-lg bg-[#0B3D91] flex items-center justify-center transition-transform group-hover:scale-105">
                   <span className="text-white font-bold leading-none">P</span>
                 </div>
-                <span className="font-bold text-xl tracking-tight text-gray-900">ACT</span>
-              </div>
-              <div className="hidden md:flex items-center space-x-6">
-                <a href="#how-it-works" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">How it works</a>
-                <a href="#features" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">Features</a>
-                <a href="/auth" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">Sign In</a>
-                <a href="/auth" className="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all">
+                <span className="font-bold text-xl tracking-tight text-[#0B1527]">ACT</span>
+              </Link>
+              <div className="hidden md:flex items-center space-x-8">
+                <Link href="/how-it-works" className="text-sm font-semibold text-[#1F2937] hover:text-[#0B3D91] transition-colors">How it works</Link>
+                <Link href="/#features" className="text-sm font-semibold text-[#1F2937] hover:text-[#0B3D91] transition-colors">Features</Link>
+                <Link href="/auth" className="text-sm font-semibold text-[#0B3D91] hover:text-blue-800 transition-colors">Sign In</Link>
+                <Link href="/auth" className="inline-flex items-center justify-center px-5 py-2.5 rounded-full text-sm font-bold text-white bg-[#0B3D91] hover:bg-[#0A3075] transition-all shadow-md hover:shadow-lg active:scale-95">
                   Get Started
-                </a>
+                </Link>
               </div>
             </div>
           </div>

@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import dynamic from 'next/dynamic';
-import { CheckCircle2, ArrowRight, ArrowLeft } from 'lucide-react';
+import { CheckCircle2, ArrowRight, ArrowLeft, PenTool, UserCheck, ShieldCheck, Link2 } from 'lucide-react';
 
 const FaceVerification = dynamic(() => import('@/components/FaceVerification'), { ssr: false });
 
@@ -11,6 +11,7 @@ export default function NewAgreementWizard() {
     const router = useRouter();
     const [step, setStep] = useState(1);
     const [user, setUser] = useState<any>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [formData, setFormData] = useState({
         title: '',
@@ -45,6 +46,7 @@ export default function NewAgreementWizard() {
     };
 
     const createAgreement = async () => {
+        setIsSubmitting(true);
         try {
             const res = await fetch('/api/agreements', {
                 method: 'POST',
@@ -56,6 +58,8 @@ export default function NewAgreementWizard() {
             setStep(2);
         } catch (err) {
             console.error(err);
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -80,140 +84,228 @@ export default function NewAgreementWizard() {
     };
 
     return (
-        <div className="max-w-3xl mx-auto px-4 py-12">
-            {/* Progress Wizard */}
-            <div className="flex items-center justify-between mb-12">
-                <StepIndicator currentStep={step} stepNum={1} label="Details" />
-                <div className={`flex-1 h-0.5 mx-4 ${step >= 2 ? 'bg-primary' : 'bg-gray-200'}`}></div>
-                <StepIndicator currentStep={step} stepNum={2} label="Verification" />
-                <div className={`flex-1 h-0.5 mx-4 ${step >= 3 ? 'bg-primary' : 'bg-gray-200'}`}></div>
-                <StepIndicator currentStep={step} stepNum={3} label="Confirmation" />
-            </div>
+        <div className="min-h-[calc(100vh-80px)] bg-[#F5F7FA] py-12 px-4 sm:px-6 lg:px-8 font-sans">
+            <div className="max-w-4xl mx-auto">
+                
+                {/* Header */}
+                <div className="mb-10 text-center animate-slide-up">
+                    <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Create New PACT</h1>
+                    <p className="mt-2 text-gray-500 font-medium">Draft your terms and verify identities cryptographically.</p>
+                </div>
 
-            <div className="glass-card p-8">
-                {step === 1 && (
-                    <div className="animate-fade-in space-y-6">
-                        <h2 className="text-2xl font-bold text-gray-900 mb-6">Agreement Details</h2>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="col-span-1 md:col-span-2">
-                                <label className="block text-sm font-medium text-gray-700">Title</label>
-                                <input name="title" onChange={handleInputChange} value={formData.title} placeholder="e.g. Loan for MacBook" className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary sm:text-sm" />
-                            </div>
-
-                            <div className="col-span-1 md:col-span-2">
-                                <label className="block text-sm font-medium text-gray-700">Description</label>
-                                <textarea name="description" onChange={handleInputChange} value={formData.description} rows={3} placeholder="Provide details of the commitment..." className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary sm:text-sm"></textarea>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Agreement Type</label>
-                                <select name="agreementType" onChange={handleInputChange} value={formData.agreementType} className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary sm:text-sm">
-                                    <option value="money">Money Loan</option>
-                                    <option value="item return">Item Return</option>
-                                    <option value="task commitment">Task Commitment</option>
-                                    <option value="custom">Custom</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Amount (Optional)</label>
-                                <input type="number" name="amount" onChange={handleInputChange} value={formData.amount} placeholder="$ 0.00" className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary sm:text-sm" />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Other Party Name (Party B)</label>
-                                <input name="partyBName" onChange={handleInputChange} value={formData.partyBName} placeholder="Jane Smith" className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary sm:text-sm" />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Other Party Email</label>
-                                <input type="email" name="partyBEmail" onChange={handleInputChange} value={formData.partyBEmail} placeholder="jane@example.com" className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary sm:text-sm" />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Due Date</label>
-                                <input type="date" name="dueDate" onChange={handleInputChange} value={formData.dueDate} className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary sm:text-sm" />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Location (Optional)</label>
-                                <input name="location" onChange={handleInputChange} value={formData.location} placeholder="e.g. New York, NY" className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary sm:text-sm" />
-                            </div>
-                        </div>
-
-                        <div className="flex justify-end pt-6 border-t border-gray-100">
-                            <button onClick={createAgreement} className="inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all shadow-md">
-                                Next Step <ArrowRight className="ml-2 w-5 h-5" />
-                            </button>
+                {/* Wizard UI */}
+                <div className="bg-white rounded-[32px] shadow-[0_8px_40px_rgba(0,0,0,0.04)] border border-gray-100 overflow-hidden relative">
+                    
+                    {/* Progress Bar Header */}
+                    <div className="bg-gray-50/80 border-b border-gray-100 px-8 py-6">
+                        <div className="flex items-center justify-between max-w-2xl mx-auto relative z-10">
+                            <StepIndicator currentStep={step} stepNum={1} icon={<PenTool className="w-5 h-5" />} label="Draft Terms" />
+                            <div className={`flex-1 h-1 mx-4 rounded-full transition-colors duration-500 ease-in-out ${step >= 2 ? 'bg-blue-600' : 'bg-gray-200'}`}></div>
+                            <StepIndicator currentStep={step} stepNum={2} icon={<UserCheck className="w-5 h-5" />} label="Verification" />
+                            <div className={`flex-1 h-1 mx-4 rounded-full transition-colors duration-500 ease-in-out ${step >= 3 ? 'bg-blue-600' : 'bg-gray-200'}`}></div>
+                            <StepIndicator currentStep={step} stepNum={3} icon={<ShieldCheck className="w-5 h-5" />} label="Secure Hash" />
                         </div>
                     </div>
-                )}
 
-                {step === 2 && (
-                    <div className="animate-slide-up space-y-8">
-                        <div className="text-center">
-                            <h2 className="text-2xl font-bold text-gray-900">Biometric Verification</h2>
-                            <p className="mt-2 text-gray-500">Both parties must verify their identity to seal the agreement.</p>
-                        </div>
+                    <div className="p-8 sm:p-12">
+                        {step === 1 && (
+                            <div className="animate-fade-in space-y-8">
+                                <div className="border-b border-gray-100 pb-6 mb-6">
+                                    <h2 className="text-xl font-bold text-gray-900">1. Define the Agreement</h2>
+                                    <p className="text-sm text-gray-500 mt-1">Provide the specifics of what is being agreed upon.</p>
+                                </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div className="space-y-4">
-                                {partyAHash ? (
-                                    <div className="p-6 bg-green-50 rounded-2xl border border-green-200 flex flex-col items-center">
-                                        <CheckCircle2 className="w-12 h-12 text-success mb-2" />
-                                        <p className="font-bold text-green-800">{formData.partyAName}</p>
-                                        <p className="text-sm text-green-600">Verified</p>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                                    <div className="col-span-1 md:col-span-2 space-y-2">
+                                        <label className="text-sm font-bold text-gray-700">Contract Title <span className="text-red-500">*</span></label>
+                                        <input name="title" onChange={handleInputChange} value={formData.title} placeholder="e.g. Graphic Design Services Retainer" className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all font-medium placeholder:text-gray-400" />
                                     </div>
-                                ) : (
-                                    <FaceVerification partyName={formData.partyAName} onVerified={(hash) => verifyParty('A', hash)} />
-                                )}
-                            </div>
 
-                            <div className="space-y-4">
-                                {partyBHash ? (
-                                    <div className="p-6 bg-green-50 rounded-2xl border border-green-200 flex flex-col items-center">
-                                        <CheckCircle2 className="w-12 h-12 text-success mb-2" />
-                                        <p className="font-bold text-green-800">{formData.partyBName}</p>
-                                        <p className="text-sm text-green-600">Verified</p>
+                                    <div className="col-span-1 md:col-span-2 space-y-2">
+                                        <label className="text-sm font-bold text-gray-700">Detailed Description <span className="text-red-500">*</span></label>
+                                        <textarea name="description" onChange={handleInputChange} value={formData.description} rows={4} placeholder="Clearly outline the deliverables, expectations, and terms of this commitment..." className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all font-medium placeholder:text-gray-400 resize-none"></textarea>
                                     </div>
-                                ) : (
-                                    <FaceVerification partyName={formData.partyBName} onVerified={(hash) => verifyParty('B', hash)} />
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                )}
 
-                {step === 3 && (
-                    <div className="animate-slide-up text-center py-12">
-                        <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
-                            <CheckCircle2 className="w-12 h-12 text-success" />
-                        </div>
-                        <h2 className="text-3xl font-extrabold text-gray-900 mb-4">Agreement Finalized!</h2>
-                        <p className="text-lg text-gray-500 mb-8 max-w-md mx-auto">
-                            The Commitment Integrity Hash (CIH) has been securely generated and attached to your professional PDF certificate.
-                        </p>
-                        <div className="flex justify-center gap-4">
-                            <button onClick={() => router.push(`/agreements/${agreementId}`)} className="inline-flex justify-center items-center px-8 py-4 border border-transparent text-base font-medium rounded-full shadow-lg text-white bg-primary hover:bg-primary/90 transition-all hover:-translate-y-1">
-                                View Certificate
-                            </button>
-                        </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold text-gray-700">Agreement Category</label>
+                                        <select name="agreementType" onChange={handleInputChange} value={formData.agreementType} className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all font-medium cursor-pointer">
+                                            <option value="money">Financial Loan / Payment</option>
+                                            <option value="item return">Asset Handover</option>
+                                            <option value="task commitment">Service / Task</option>
+                                            <option value="custom">Custom Commitment</option>
+                                        </select>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold text-gray-700">Monetary Value (Optional)</label>
+                                        <div className="relative">
+                                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                                <span className="text-gray-500 font-bold">$</span>
+                                            </div>
+                                            <input type="number" name="amount" onChange={handleInputChange} value={formData.amount} placeholder="0.00" className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-xl px-4 py-3 pl-8 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all font-medium placeholder:text-gray-400" />
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="col-span-1 md:col-span-2 border-t border-gray-100 mt-4 pt-8 border-dashed">
+                                        <div className="mb-4">
+                                            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Counterparty Details</h3>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold text-gray-700">Their Full Name <span className="text-red-500">*</span></label>
+                                        <input name="partyBName" onChange={handleInputChange} value={formData.partyBName} placeholder="Jane Smith" className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all font-medium placeholder:text-gray-400" />
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold text-gray-700">Their Email <span className="text-red-500">*</span></label>
+                                        <input type="email" name="partyBEmail" onChange={handleInputChange} value={formData.partyBEmail} placeholder="jane@example.com" className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all font-medium placeholder:text-gray-400" />
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold text-gray-700">Execution / Due Date <span className="text-red-500">*</span></label>
+                                        <input type="date" name="dueDate" onChange={handleInputChange} value={formData.dueDate} className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all font-medium text-gray-600" />
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold text-gray-700">Jurisdiction / Location (Optional)</label>
+                                        <input name="location" onChange={handleInputChange} value={formData.location} placeholder="e.g. San Francisco, CA" className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all font-medium placeholder:text-gray-400" />
+                                    </div>
+                                </div>
+
+                                <div className="flex justify-end pt-8 mt-8 border-t border-gray-100">
+                                    <button 
+                                        onClick={createAgreement} 
+                                        disabled={isSubmitting || !formData.title || !formData.description || !formData.partyBName || !formData.partyBEmail || !formData.dueDate}
+                                        className="group inline-flex justify-center items-center px-8 py-3.5 border border-transparent text-sm font-bold rounded-xl text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                                    >
+                                        {isSubmitting ? 'Creating Record...' : 'Proceed to Verification'}
+                                        {!isSubmitting && <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />}
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {step === 2 && (
+                            <div className="animate-slide-up space-y-10">
+                                <div className="text-center bg-blue-50 rounded-2xl p-8 border border-blue-100">
+                                    <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-500/30">
+                                        <ShieldCheck className="w-8 h-8 text-white" />
+                                    </div>
+                                    <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight">Biometric Signatures Required</h2>
+                                    <p className="mt-3 text-gray-600 max-w-lg mx-auto leading-relaxed font-medium">
+                                        To cryptographically seal this agreement, both parties must provide local Face ID verification. Raw images are <span className="font-bold text-gray-900">never</span> saved or transmitted.
+                                    </p>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative">
+                                    <div className="hidden md:block absolute left-1/2 top-4 bottom-4 w-px bg-gray-200 -translate-x-1/2"></div>
+                                    
+                                    {/* Party A */}
+                                    <div className="flex flex-col">
+                                        <div className="mb-4">
+                                            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Party A (Initiator)</span>
+                                            <h3 className="text-lg font-bold text-gray-900 mt-1">{formData.partyAName}</h3>
+                                        </div>
+                                        
+                                        <div className="flex-1 bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:border-blue-300 transition-colors">
+                                            {partyAHash ? (
+                                                <div className="h-full flex flex-col items-center justify-center p-8 bg-green-50/50">
+                                                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4 ring-4 ring-green-50">
+                                                        <CheckCircle2 className="w-8 h-8 text-green-600" />
+                                                    </div>
+                                                    <p className="font-bold text-gray-900 text-lg">Identity Verified</p>
+                                                    <p className="text-xs text-green-700 font-mono mt-2 break-all text-center max-w-full px-4 overflow-hidden text-ellipsis whitespace-nowrap">{partyAHash}</p>
+                                                </div>
+                                            ) : (
+                                                <div className="h-full p-6">
+                                                    <FaceVerification partyName={formData.partyAName} onVerified={(hash) => verifyParty('A', hash)} />
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Party B */}
+                                    <div className="flex flex-col">
+                                        <div className="mb-4">
+                                            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Party B (Counterparty)</span>
+                                            <h3 className="text-lg font-bold text-gray-900 mt-1">{formData.partyBName}</h3>
+                                        </div>
+                                        
+                                        <div className="flex-1 bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:border-blue-300 transition-colors">
+                                            {partyBHash ? (
+                                                <div className="h-full flex flex-col items-center justify-center p-8 bg-green-50/50">
+                                                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4 ring-4 ring-green-50">
+                                                        <CheckCircle2 className="w-8 h-8 text-green-600" />
+                                                    </div>
+                                                    <p className="font-bold text-gray-900 text-lg">Identity Verified</p>
+                                                    <p className="text-xs text-green-700 font-mono mt-2 break-all text-center max-w-full px-4 overflow-hidden text-ellipsis whitespace-nowrap">{partyBHash}</p>
+                                                </div>
+                                            ) : (
+                                                <div className="h-full p-6">
+                                                    <FaceVerification partyName={formData.partyBName} onVerified={(hash) => verifyParty('B', hash)} />
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {step === 3 && (
+                            <div className="animate-slide-up text-center py-16">
+                                <div className="relative w-32 h-32 mx-auto mb-8">
+                                    <div className="absolute inset-0 bg-green-400 blur-2xl opacity-20 rounded-full"></div>
+                                    <div className="relative w-full h-full bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center shadow-2xl ring-8 ring-green-50">
+                                        <CheckCircle2 className="w-16 h-16 text-white" />
+                                    </div>
+                                </div>
+                                <h2 className="text-4xl font-extrabold text-gray-900 tracking-tight mb-4">Immutable Proof Generated</h2>
+                                <p className="text-lg text-gray-500 mb-10 max-w-lg mx-auto leading-relaxed">
+                                    The Commitment Integrity Hash (CIH) has been securely stamped into your cryptographic agreement certificate.
+                                </p>
+                                <div className="flex justify-center">
+                                    <button 
+                                        onClick={() => router.push(`/agreements/${agreementId}`)} 
+                                        className="group relative inline-flex justify-center items-center px-10 py-4 text-base font-bold rounded-2xl text-white bg-gray-900 hover:bg-black transition-all hover:-translate-y-1 hover:shadow-xl active:scale-95"
+                                    >
+                                        <Link2 className="w-5 h-5 mr-2" />
+                                        Access Digital Certificate
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
-                )}
+                </div>
             </div>
         </div>
     );
 }
 
-function StepIndicator({ currentStep, stepNum, label }: { currentStep: number, stepNum: number, label: string }) {
-    const isActive = currentStep >= stepNum;
+function StepIndicator({ currentStep, stepNum, icon, label }: { currentStep: number, stepNum: number, icon: React.ReactNode, label: string }) {
+    const isCompleted = currentStep > stepNum;
+    const isActive = currentStep === stepNum;
+    const isUpcoming = currentStep < stepNum;
+
     return (
-        <div className="flex flex-col items-center">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-colors duration-300 ${isActive ? 'bg-primary text-white shadow-md' : 'bg-gray-100 text-gray-400'}`}>
-                {isActive && currentStep > stepNum ? <CheckCircle2 className="w-6 h-6" /> : stepNum}
+        <div className="flex flex-col items-center group">
+            <div className={`
+                relative w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 z-10
+                ${isCompleted ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30' : ''}
+                ${isActive ? 'bg-white border-2 border-blue-600 text-blue-600 shadow-md ring-4 ring-blue-50' : ''}
+                ${isUpcoming ? 'bg-gray-100 text-gray-400 border border-gray-200' : ''}
+            `}>
+                {isCompleted ? <CheckCircle2 className="w-6 h-6" /> : icon}
             </div>
-            <span className={`mt-2 text-sm font-medium ${isActive ? 'text-gray-900' : 'text-gray-400'}`}>{label}</span>
+            <span className={`
+                absolute md:relative md:mt-3 text-xs md:text-sm font-bold tracking-wide transition-colors
+                hidden md:block
+                ${isCompleted ? 'text-gray-900' : ''}
+                ${isActive ? 'text-blue-600' : ''}
+                ${isUpcoming ? 'text-gray-400' : ''}
+            `}>
+                {label}
+            </span>
         </div>
     );
 }

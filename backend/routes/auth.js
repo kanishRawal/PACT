@@ -8,7 +8,30 @@ const JWT_SECRET = process.env.JWT_SECRET || 'pact_super_secret_for_demo';
 
 router.post('/register', async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        let { name, email, password } = req.body;
+
+        // Backend Validation
+        if (!name || !email || !password) {
+            return res.status(400).json({ error: 'All fields are required' });
+        }
+        
+        name = name.trim();
+        email = email.trim().toLowerCase();
+        
+        const nameRegex = /^[a-zA-Z\s'\-]+$/;
+        if (!nameRegex.test(name)) {
+            return res.status(400).json({ error: 'Name contains invalid characters' });
+        }
+        
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ error: 'Invalid email format' });
+        }
+        
+        if (password.length < 6) {
+            return res.status(400).json({ error: 'Password must be at least 6 characters' });
+        }
+
         const existingUser = await User.findOne({ email });
         if (existingUser) return res.status(400).json({ error: 'Email already in use' });
 
@@ -25,7 +48,14 @@ router.post('/register', async (req, res) => {
 
 router.post('/login', async (req, res) => {
     try {
-        const { email, password } = req.body;
+        let { email, password } = req.body;
+        
+        if (!email || !password) {
+            return res.status(400).json({ error: 'All fields are required' });
+        }
+        
+        email = email.trim().toLowerCase();
+
         const user = await User.findOne({ email });
         if (!user) return res.status(401).json({ error: 'Invalid credentials' });
 
