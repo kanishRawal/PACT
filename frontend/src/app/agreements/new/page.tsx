@@ -3,7 +3,17 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import dynamic from 'next/dynamic';
-import { CheckCircle2, ArrowRight, PenTool, UserCheck, ShieldCheck, Link2 } from 'lucide-react';
+import { 
+    ArrowRight, 
+    ShieldCheck, 
+    PenTool, 
+    UserCheck, 
+    Link2, 
+    CheckCircle2, 
+    Lock, 
+    Sparkles,
+    Activity
+} from 'lucide-react';
 
 const FaceVerification = dynamic(() => import('@/components/FaceVerification'), { ssr: false });
 
@@ -21,7 +31,7 @@ export default function NewAgreementWizard() {
         partyBName: '',
         partyBEmail: '',
         amount: '',
-        agreementType: 'money',
+        agreementType: 'General',
         dueDate: '',
         location: ''
     });
@@ -41,18 +51,26 @@ export default function NewAgreementWizard() {
         setFormData(prev => ({ ...prev, partyAName: userData.name, partyAEmail: userData.email }));
     }, [router]);
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
-
     const createAgreement = async () => {
         setIsSubmitting(true);
         try {
+            const token = Cookies.get('token');
             const res = await fetch('/api/agreements', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
                 body: JSON.stringify(formData)
             });
+
+            if (res.status === 401) {
+                Cookies.remove('user');
+                Cookies.remove('token');
+                router.push('/auth');
+                return;
+            }
+
             const data = await res.json();
             if (data.success) {
                 setAgreementId(data.data._id);
@@ -69,14 +87,18 @@ export default function NewAgreementWizard() {
 
     const verifyParty = async (party: 'A' | 'B', hash: string) => {
         try {
+            const token = Cookies.get('token');
             const res = await fetch(`/api/agreements/${agreementId}/verify`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
                 body: JSON.stringify({ party, hash })
             });
 
             const data = await res.json();
-            
+
             if (data.success) {
                 if (party === 'A') setPartyAHash(hash);
                 if (party === 'B') setPartyBHash(hash);
@@ -92,170 +114,170 @@ export default function NewAgreementWizard() {
         }
     };
 
-    const inputCls = "w-full bg-white/[0.03] border border-white/[0.08] text-white rounded-xl px-4 py-3.5 focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all font-medium placeholder:text-gray-600";
+    const inputCls = "w-full bg-[#141619] border border-[#2C2E3A] text-white rounded-2xl px-6 py-4 focus:outline-none focus:border-[#0A21C0] transition-all font-medium placeholder:text-[#B3B4BD]/20";
 
     return (
-        <div className="min-h-[calc(100vh-64px)] bg-[#050A18] py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-4xl mx-auto">
-                
-                {/* Header */}
-                <div className="mb-10 text-center animate-slide-up">
-                    <h1 className="text-3xl font-extrabold text-white tracking-tight">Initialize PACT</h1>
-                    <p className="mt-2 text-gray-500 text-sm font-medium">Define terms, assign counterparties, and establish a verifiable digital record.</p>
+        <div className="min-h-screen bg-[#141619] py-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-4xl mx-auto animate-fade-in py-10">
+                {/* Contextual Header */}
+                <div className="mb-12 text-center">
+                    <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#050A44] border border-[#0A21C0]/20 mb-4 transition-all hover:border-[#0A21C0]/40 cursor-default shadow-[0_0_20px_rgba(10,33,192,0.1)]">
+                        <Lock className="w-3 h-3 text-[#0A21C0]" />
+                        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-[#0A21C0]">Secure Entry Stream</span>
+                    </div>
+                    <h1 className="text-4xl font-black text-white tracking-tight leading-none uppercase">Initialize PACT</h1>
+                    <p className="mt-4 text-[10px] text-[#B3B4BD] font-black uppercase tracking-[0.3em] opacity-60">
+                        Phase {step} <span className="text-[#0A21C0]/30">::</span> Immutable Records Unit
+                    </p>
                 </div>
 
-                {/* Wizard */}
-                <div className="rounded-2xl border border-white/[0.06] bg-[#0B1120]/60 overflow-hidden relative">
+                {/* Wizard Modular Card */}
+                <div className="rounded-[2.5rem] border border-[#2C2E3A] bg-[#2C2E3A]/40 shadow-2xl overflow-hidden relative group backdrop-blur-3xl">
                     
-                    {/* Progress */}
-                    <div className="border-b border-white/[0.04] px-8 py-6 bg-white/[0.01]">
+                    {/* Progress Indicators */}
+                    <div className="border-b border-[#2C2E3A] px-10 py-10 bg-[#141619]/50">
                         <div className="flex items-center justify-between max-w-2xl mx-auto relative z-10">
-                            <StepIndicator currentStep={step} stepNum={1} icon={<PenTool className="w-5 h-5" />} label="Draft" />
-                            <div className={`flex-1 h-px mx-4 transition-colors duration-500 ${step >= 2 ? 'bg-blue-500' : 'bg-white/[0.06]'}`}></div>
-                            <StepIndicator currentStep={step} stepNum={2} icon={<UserCheck className="w-5 h-5" />} label="Verify" />
-                            <div className={`flex-1 h-px mx-4 transition-colors duration-500 ${step >= 3 ? 'bg-blue-500' : 'bg-white/[0.06]'}`}></div>
-                            <StepIndicator currentStep={step} stepNum={3} icon={<ShieldCheck className="w-5 h-5" />} label="Seal" />
+                            <StepIndicator currentStep={step} stepNum={1} icon={PenTool} label="Draft" />
+                            <div className="flex-1 px-4">
+                                <div className={`h-0.5 transition-all duration-700 rounded-full ${step >= 2 ? 'bg-[#0A21C0] shadow-[0_0_15px_#0A21C0]' : 'bg-[#2C2E3A]'}`}></div>
+                            </div>
+                            <StepIndicator currentStep={step} stepNum={2} icon={UserCheck} label="Verify" />
+                            <div className="flex-1 px-4">
+                                <div className={`h-0.5 transition-all duration-700 rounded-full ${step >= 3 ? 'bg-[#0A21C0] shadow-[0_0_15px_#0A21C0]' : 'bg-[#2C2E3A]'}`}></div>
+                            </div>
+                            <StepIndicator currentStep={step} stepNum={3} icon={Link2} label="Seal" />
                         </div>
                     </div>
 
-                    <div className="p-8 sm:p-10">
+                    <div className="p-10 sm:p-14">
                         {step === 1 && (
-                            <div className="animate-fade-in space-y-8">
-                                <div className="border-b border-white/[0.04] pb-5 mb-6">
-                                    <h2 className="text-lg font-bold text-white">Define the commitment</h2>
-                                    <p className="text-xs text-gray-500 mt-1">Detail the parameters, obligations, and limits of this contract.</p>
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5">
-                                    <div className="col-span-1 md:col-span-2 space-y-2">
-                                        <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Title <span className="text-red-400">*</span></label>
-                                        <input name="title" onChange={handleInputChange} value={formData.title} placeholder="e.g. Freelance Design Retainer" className={inputCls} />
+                            <div className="animate-slide-up space-y-12">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                                    <div className="space-y-4">
+                                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#B3B4BD] ml-2 opacity-60">Agreement Title</label>
+                                        <input
+                                            type="text"
+                                            placeholder="e.g., Software Licensing PACT"
+                                            className={inputCls}
+                                            value={formData.title}
+                                            onChange={(e) => setFormData({...formData, title: e.target.value})}
+                                        />
                                     </div>
-
-                                    <div className="col-span-1 md:col-span-2 space-y-2">
-                                        <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Description <span className="text-red-400">*</span></label>
-                                        <textarea name="description" onChange={handleInputChange} value={formData.description} rows={4} placeholder="Outline deliverables, expectations, and terms..." className={`${inputCls} resize-none`}></textarea>
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Category</label>
-                                        <select name="agreementType" onChange={handleInputChange} value={formData.agreementType} className={`${inputCls} cursor-pointer`}>
-                                            <option value="money">Financial / Payment</option>
-                                            <option value="item return">Asset Handover</option>
-                                            <option value="task commitment">Service / Task</option>
-                                            <option value="custom">Custom</option>
+                                    <div className="space-y-4">
+                                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#B3B4BD] ml-2 opacity-60">Agreement Type</label>
+                                        <select
+                                            className={inputCls}
+                                            value={formData.agreementType}
+                                            onChange={(e) => setFormData({...formData, agreementType: e.target.value})}
+                                        >
+                                            <option value="General">General Commitment</option>
+                                            <option value="Service">Service Level PACT</option>
+                                            <option value="Asset">Asset Transfer</option>
+                                            <option value="Personal">Personal Voucher</option>
                                         </select>
                                     </div>
+                                </div>
 
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Amount (optional)</label>
-                                        <div className="relative">
-                                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                                <span className="text-gray-500 font-semibold text-sm">$</span>
-                                            </div>
-                                            <input type="number" name="amount" onChange={handleInputChange} value={formData.amount} placeholder="0.00" className={`${inputCls} pl-8`} />
-                                        </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                                    <div className="space-y-4">
+                                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#B3B4BD] ml-2 opacity-60">Finality Date (Due)</label>
+                                        <input
+                                            type="date"
+                                            className={inputCls}
+                                            value={formData.dueDate}
+                                            onChange={(e) => setFormData({...formData, dueDate: e.target.value})}
+                                        />
                                     </div>
-                                    
-                                    <div className="col-span-1 md:col-span-2 border-t border-white/[0.04] mt-4 pt-6">
-                                        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Counterparty</h3>
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Full name <span className="text-red-400">*</span></label>
-                                        <input name="partyBName" onChange={handleInputChange} value={formData.partyBName} placeholder="Jane Smith" className={inputCls} />
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Email <span className="text-red-400">*</span></label>
-                                        <input type="email" name="partyBEmail" onChange={handleInputChange} value={formData.partyBEmail} placeholder="jane@example.com" className={inputCls} />
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Due date <span className="text-red-400">*</span></label>
-                                        <input type="date" name="dueDate" onChange={handleInputChange} value={formData.dueDate} className={inputCls} />
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Location (optional)</label>
-                                        <input name="location" onChange={handleInputChange} value={formData.location} placeholder="San Francisco, CA" className={inputCls} />
+                                    <div className="space-y-4">
+                                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#B3B4BD] ml-2 opacity-60">Nominal Amount (Optional)</label>
+                                        <input
+                                            type="number"
+                                            placeholder="0.00"
+                                            className={inputCls}
+                                            value={formData.amount}
+                                            onChange={(e) => setFormData({...formData, amount: e.target.value})}
+                                        />
                                     </div>
                                 </div>
 
-                                <div className="flex justify-end pt-6 mt-6 border-t border-white/[0.04]">
-                                    <button 
-                                        onClick={createAgreement} 
+                                <div className="space-y-4">
+                                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#B3B4BD] ml-2 opacity-60">Detailed Description</label>
+                                    <textarea
+                                        rows={4}
+                                        placeholder="Describe the commitment in full detail..."
+                                        className={`${inputCls} resize-none`}
+                                        value={formData.description}
+                                        onChange={(e) => setFormData({...formData, description: e.target.value})}
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                                    <div className="space-y-4">
+                                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#B3B4BD] ml-2 opacity-60">Recipient Name</label>
+                                        <input
+                                            type="text"
+                                            placeholder="Counterparty Full Name"
+                                            className={inputCls}
+                                            value={formData.partyBName}
+                                            onChange={(e) => setFormData({...formData, partyBName: e.target.value})}
+                                        />
+                                    </div>
+                                    <div className="space-y-4">
+                                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#B3B4BD] ml-2 opacity-60">Recipient Email</label>
+                                        <input
+                                            type="email"
+                                            placeholder="counterparty@pact.com"
+                                            className={inputCls}
+                                            value={formData.partyBEmail}
+                                            onChange={(e) => setFormData({...formData, partyBEmail: e.target.value})}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="flex justify-end pt-12 border-t border-[#2C2E3A]">
+                                    <button
+                                        onClick={createAgreement}
                                         disabled={isSubmitting || !formData.title || !formData.description || !formData.partyBName || !formData.partyBEmail || !formData.dueDate}
-                                        className="group inline-flex items-center px-8 py-3.5 text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 transition-all shadow-[0_0_20px_rgba(99,102,241,0.2)] hover:shadow-[0_0_30px_rgba(99,102,241,0.4)] hover:-translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none disabled:grayscale"
+                                        className="group inline-flex items-center px-12 py-5 text-[10px] font-black tracking-[0.2em] uppercase rounded-2xl text-white bg-[#0A21C0] hover:bg-white hover:text-[#0A21C0] transition-all shadow-[0_0_40px_rgba(10,33,192,0.3)] disabled:opacity-30 disabled:cursor-not-allowed"
                                     >
-                                        {isSubmitting ? 'Creating...' : 'Proceed to verification'}
-                                        {!isSubmitting && <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />}
+                                        {isSubmitting ? 'Processing Network...' : 'Finalize Draft'}
+                                        <ArrowRight className="ml-3 w-4 h-4 transition-transform group-hover:translate-x-1" />
                                     </button>
                                 </div>
                             </div>
                         )}
 
                         {step === 2 && (
-                            <div className="animate-slide-up space-y-8">
-                                <div className="text-center rounded-2xl p-8 bg-white/[0.02] border border-white/[0.06]">
-                                    <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-[0_0_30px_rgba(99,102,241,0.3)]">
-                                        <ShieldCheck className="w-7 h-7 text-white" />
-                                    </div>
-                                    <h2 className="text-xl font-bold text-white tracking-tight">Biometric verification required</h2>
-                                    <p className="mt-2 text-gray-500 max-w-md mx-auto text-sm leading-relaxed">
-                                        Both parties must verify their identity. Biometric data is processed locally and <span className="text-white font-semibold">never transmitted</span>.
-                                    </p>
+                            <div className="animate-slide-up space-y-12">
+                                <div className="text-center space-y-2 mb-10">
+                                    <h3 className="text-xl font-black text-white uppercase tracking-tight">Identity Synchronization</h3>
+                                    <p className="text-[10px] text-[#B3B4BD] font-black uppercase tracking-widest opacity-40">Verifying peer-to-peer commitment integrity</p>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
-                                    <div className="hidden md:block absolute left-1/2 top-4 bottom-4 w-px bg-white/[0.04] -translate-x-1/2"></div>
-                                    
-                                    {/* Party A */}
-                                    <div className="flex flex-col">
-                                        <div className="mb-3">
-                                            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Initiator</span>
-                                            <h3 className="text-base font-bold text-white mt-0.5">{formData.partyAName}</h3>
-                                        </div>
-                                        
-                                        <div className="flex-1 rounded-2xl border border-white/[0.06] bg-white/[0.02] overflow-hidden hover:border-blue-500/20 transition-colors">
-                                            {partyAHash ? (
-                                                <div className="h-full flex flex-col items-center justify-center p-8">
-                                                    <div className="w-14 h-14 bg-emerald-500/[0.1] border border-emerald-500/[0.2] rounded-2xl flex items-center justify-center mb-4">
-                                                        <CheckCircle2 className="w-7 h-7 text-emerald-400" />
-                                                    </div>
-                                                    <p className="font-bold text-white text-base">Authenticated</p>
-                                                    <p className="text-[10px] text-emerald-400/60 font-mono mt-2 break-all text-center max-w-full px-4">{partyAHash}</p>
-                                                </div>
-                                            ) : (
-                                                <div className="h-full p-5">
-                                                    <FaceVerification partyName={formData.partyAName} onVerified={(hash) => verifyParty('A', hash)} />
-                                                </div>
-                                            )}
-                                        </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                                    <div className="bg-[#141619] p-10 rounded-[2rem] border border-[#2C2E3A] relative overflow-hidden group">
+                                        <div className="absolute top-0 right-0 w-24 h-24 bg-[#0A21C0]/5 blur-2xl group-hover:bg-[#0A21C0]/10 transition-colors"></div>
+                                        <h3 className="text-white font-black text-xs uppercase tracking-widest mb-8 border-b border-[#2C2E3A] pb-4">{formData.partyAName} <span className="opacity-30 ml-2">(Creator)</span></h3>
+                                        {partyAHash ? (
+                                            <div className="flex items-center space-x-3 text-[#22C55E] bg-[#22C55E]/5 p-4 rounded-xl border border-[#22C55E]/10">
+                                                <CheckCircle2 className="w-4 h-4" />
+                                                <span className="text-[10px] font-black uppercase tracking-widest">Verified Session</span>
+                                            </div>
+                                        ) : (
+                                            <FaceVerification partyName={formData.partyAName} onVerified={(hash) => verifyParty('A', hash)} />
+                                        )}
                                     </div>
-
-                                    {/* Party B */}
-                                    <div className="flex flex-col">
-                                        <div className="mb-3">
-                                            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Counterparty</span>
-                                            <h3 className="text-base font-bold text-white mt-0.5">{formData.partyBName}</h3>
-                                        </div>
-                                        
-                                        <div className="flex-1 rounded-2xl border border-white/[0.06] bg-white/[0.02] overflow-hidden hover:border-blue-500/20 transition-colors">
-                                            {partyBHash ? (
-                                                <div className="h-full flex flex-col items-center justify-center p-8">
-                                                    <div className="w-14 h-14 bg-emerald-500/[0.1] border border-emerald-500/[0.2] rounded-2xl flex items-center justify-center mb-4">
-                                                        <CheckCircle2 className="w-7 h-7 text-emerald-400" />
-                                                    </div>
-                                                    <p className="font-bold text-white text-base">Authenticated</p>
-                                                    <p className="text-[10px] text-emerald-400/60 font-mono mt-2 break-all text-center max-w-full px-4">{partyBHash}</p>
-                                                </div>
-                                            ) : (
-                                                <div className="h-full p-5">
-                                                    <FaceVerification partyName={formData.partyBName} onVerified={(hash) => verifyParty('B', hash)} />
-                                                </div>
-                                            )}
-                                        </div>
+                                    <div className="bg-[#141619] p-10 rounded-[2rem] border border-[#2C2E3A] relative overflow-hidden group">
+                                        <div className="absolute top-0 right-0 w-24 h-24 bg-[#0A21C0]/5 blur-2xl group-hover:bg-[#0A21C0]/10 transition-colors"></div>
+                                        <h3 className="text-white font-black text-xs uppercase tracking-widest mb-8 border-b border-[#2C2E3A] pb-4">{formData.partyBName} <span className="opacity-30 ml-2">(Recipient)</span></h3>
+                                        {partyBHash ? (
+                                            <div className="flex items-center space-x-3 text-[#22C55E] bg-[#22C55E]/5 p-4 rounded-xl border border-[#22C55E]/10">
+                                                <CheckCircle2 className="w-4 h-4" />
+                                                <span className="text-[10px] font-black uppercase tracking-widest">Verified Session</span>
+                                            </div>
+                                        ) : (
+                                            <FaceVerification partyName={formData.partyBName} onVerified={(hash) => verifyParty('B', hash)} />
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -263,22 +285,22 @@ export default function NewAgreementWizard() {
 
                         {step === 3 && (
                             <div className="animate-slide-up text-center py-16">
-                                <div className="relative w-24 h-24 mx-auto mb-8">
-                                    <div className="absolute inset-0 bg-emerald-500 blur-2xl opacity-15 rounded-full"></div>
-                                    <div className="relative w-full h-full bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center shadow-[0_0_40px_rgba(16,185,129,0.2)]">
-                                        <CheckCircle2 className="w-12 h-12 text-white" />
+                                <div className="relative w-32 h-32 mx-auto mb-10">
+                                    <div className="absolute inset-0 bg-[#0A21C0] blur-[60px] opacity-20 rounded-full animate-pulse"></div>
+                                    <div className="relative w-full h-full bg-[#141619] border border-[#0A21C0]/30 rounded-[2.5rem] flex items-center justify-center shadow-2xl">
+                                        <CheckCircle2 className="w-12 h-12 text-[#0A21C0]" />
                                     </div>
                                 </div>
-                                <h2 className="text-3xl font-extrabold text-white tracking-tight mb-3">Agreement sealed</h2>
-                                <p className="text-base text-gray-400 mb-10 max-w-md mx-auto leading-relaxed">
-                                    The Agreement Verification ID has been created and your agreement is now securely finalized.
+                                <h2 className="text-4xl font-black text-white tracking-tighter uppercase mb-6">PACT Synchronized</h2>
+                                <p className="text-[10px] text-[#B3B4BD] mb-14 max-w-sm mx-auto leading-relaxed font-black uppercase tracking-[0.2em] opacity-60">
+                                    Your digital commitment is now cryptographically secured and live on the record unit.
                                 </p>
-                                <button 
-                                    onClick={() => router.push(`/agreements/${agreementId}`)} 
-                                    className="group inline-flex items-center px-8 py-4 text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 transition-all shadow-[0_0_20px_rgba(99,102,241,0.2)] hover:shadow-[0_0_30px_rgba(99,102,241,0.4)] hover:-translate-y-0.5"
+                                <button
+                                    onClick={() => router.push(`/agreements/${agreementId}`)}
+                                    className="group inline-flex items-center px-12 py-5 text-[10px] font-black tracking-[0.2em] uppercase rounded-2xl text-white bg-[#0A21C0] hover:bg-white hover:text-[#0A21C0] transition-all shadow-[0_0_40px_rgba(10,33,192,0.3)]"
                                 >
-                                    <Link2 className="w-4.5 h-4.5 mr-2" />
-                                    View certificate
+                                    <Link2 className="w-4.5 h-4.5 mr-3" />
+                                    Security Console
                                 </button>
                             </div>
                         )}
@@ -289,30 +311,22 @@ export default function NewAgreementWizard() {
     );
 }
 
-function StepIndicator({ currentStep, stepNum, icon, label }: { currentStep: number, stepNum: number, icon: React.ReactNode, label: string }) {
-    const isCompleted = currentStep > stepNum;
+function StepIndicator({ currentStep, stepNum, icon: Icon, label }: { currentStep: number, stepNum: number, icon: any, label: string }) {
     const isActive = currentStep === stepNum;
-    const isUpcoming = currentStep < stepNum;
-
+    const isCompleted = currentStep > stepNum;
+    
     return (
-        <div className="flex flex-col items-center group">
-            <div className={`
-                relative w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-300 z-10
-                ${isCompleted ? 'bg-blue-600 text-white shadow-[0_0_20px_rgba(59,130,246,0.3)]' : ''}
-                ${isActive ? 'bg-white/[0.05] border border-blue-500/50 text-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : ''}
-                ${isUpcoming ? 'bg-white/[0.02] text-gray-600 border border-white/[0.06]' : ''}
-            `}>
-                {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : icon}
+        <div className={`flex flex-col items-center group relative transition-all duration-500 ${isActive || isCompleted ? 'scale-110' : 'opacity-20 grayscale'}`}>
+            <div className={`w-14 h-14 rounded-[1.25rem] flex items-center justify-center transition-all border-2 ${
+                isActive ? 'bg-[#0A21C0] border-transparent text-white shadow-[0_0_30px_rgba(10,33,192,0.5)]' : 
+                isCompleted ? 'bg-[#141619] border-[#0A21C0]/40 text-[#0A21C0]' : 
+                'bg-[#141619] border-[#2C2E3A] text-[#B3B4BD]'
+            }`}>
+                {isCompleted ? <CheckCircle2 className="w-6 h-6" /> : <Icon className="w-6 h-6" />}
             </div>
-            <span className={`
-                mt-2 text-[10px] font-bold tracking-wider uppercase transition-colors
-                hidden md:block
-                ${isCompleted ? 'text-white' : ''}
-                ${isActive ? 'text-blue-400' : ''}
-                ${isUpcoming ? 'text-gray-600' : ''}
-            `}>
+            <p className={`mt-4 text-[10px] font-black uppercase tracking-[0.3em] transition-colors ${isActive ? 'text-white' : 'text-[#B3B4BD] opacity-40'}`}>
                 {label}
-            </span>
+            </p>
         </div>
     );
 }

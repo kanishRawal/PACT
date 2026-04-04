@@ -8,7 +8,7 @@ const agreementSchema = new mongoose.Schema({
     partyBName: { type: String, required: true },
     partyBEmail: { type: String, required: true },
     amount: { type: Number },
-    agreementType: { type: String, required: true, enum: ['money', 'item return', 'task commitment', 'custom'] },
+    agreementType: { type: String, required: true, enum: ['General', 'Service', 'Asset', 'Personal', 'Other'] },
     dueDate: { type: Date, required: true },
     location: { type: String },
     status: { 

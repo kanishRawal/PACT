@@ -72,177 +72,173 @@ export default function AuthPage() {
     };
 
     return (
-        <div className="min-h-[calc(100vh-64px)] flex bg-[#050A18] text-white">
+        <div className="min-h-screen flex bg-[#141619] text-white font-sans overflow-hidden">
             
             {/* Left — Brand panel */}
-            <div className="hidden lg:flex w-1/2 relative overflow-hidden flex-col justify-between p-16">
+            <div className="hidden lg:flex w-1/2 relative flex-col justify-between p-20 bg-gradient-to-br from-[#050A44] to-[#141619] border-r border-[#2C2E3A]">
                 {/* Ambient glows */}
-                <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-blue-600/[0.06] blur-[150px] rounded-full pointer-events-none -translate-y-1/3 -translate-x-1/3"></div>
-                <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-indigo-600/[0.05] blur-[120px] rounded-full pointer-events-none translate-y-1/3 translate-x-1/3"></div>
-                
-                {/* Subtle grid */}
-                <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)', backgroundSize: '60px 60px' }}></div>
+                <div className="absolute top-0 left-0 w-full h-full bg-[#0A21C0]/10 blur-[150px] rounded-full pointer-events-none -translate-y-1/2 -translate-x-1/2"></div>
                 
                 <div className="relative z-10">
-                    <div className="flex items-center mb-2">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mr-1.5 shadow-[0_0_30px_rgba(99,102,241,0.3)]">
-                            <span className="text-white font-bold text-sm">P</span>
-                        </div>
-                        <span className="text-2xl font-bold tracking-tight">ACT</span>
+                    <div className="flex items-center space-x-1 group cursor-pointer">
+                        <div className="w-1 h-6 bg-[#0A21C0] rounded-full group-hover:scale-y-110 transition-transform"></div>
+                        <div className="w-1 h-4 bg-[#B3B4BD] rounded-full group-hover:scale-y-125 transition-transform"></div>
+                        <div className="w-1 h-7 bg-[#0A21C0] rounded-full group-hover:scale-y-110 transition-transform"></div>
+                        <span className="text-2xl font-black tracking-tighter ml-3">PACT</span>
                     </div>
                 </div>
 
-                <div className="relative z-10 max-w-md animate-slide-up">
-                    <h2 className="text-5xl font-extrabold tracking-tight mb-6 leading-[1.1]">
-                        <span className="bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-400">From handshake</span>
+                <div className="relative z-10 max-lg:max-w-lg animate-slide-up">
+                    <h2 className="text-6xl font-black tracking-tight mb-8 leading-none uppercase">
+                        From <span className="text-[#0A21C0]">handshake</span>
                         <br />
-                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-400">to hard proof.</span>
+                        To <span className="text-white/20 italic">hard proof.</span>
                     </h2>
-                    <p className="text-base text-gray-400 font-light leading-relaxed mb-14">
-                        The infrastructure powering next-generation digital commitments — eliminating friction through cryptographic certainty.
+                    <p className="text-sm text-[#B3B4BD] font-bold uppercase tracking-widest leading-relaxed mb-16 opacity-80">
+                        The infrastructure powering next-generation digital commitments. Immutable records, cryptographic certainty.
                     </p>
                     
-                    <div className="space-y-5">
+                    <div className="space-y-8">
                         <div className="flex items-center group">
-                            <div className="w-10 h-10 rounded-lg bg-white/[0.03] border border-white/[0.06] flex items-center justify-center mr-4 group-hover:border-blue-500/20 transition-colors">
-                                <Fingerprint className="w-4.5 h-4.5 text-blue-400" />
+                            <div className="w-12 h-12 rounded-2xl bg-[#141619] border border-[#2C2E3A] flex items-center justify-center mr-6 group-hover:border-[#0A21C0]/50 transition-all shadow-lg">
+                                <Fingerprint className="w-5 h-5 text-[#0A21C0]" />
                             </div>
-                            <span className="text-gray-400 text-sm font-medium">Zero-knowledge facial verification</span>
+                            <span className="text-[#B3B4BD] text-[10px] font-black uppercase tracking-[0.2em]">Zero-Knowledge Verifications</span>
                         </div>
                         <div className="flex items-center group">
-                            <div className="w-10 h-10 rounded-lg bg-white/[0.03] border border-white/[0.06] flex items-center justify-center mr-4 group-hover:border-emerald-500/20 transition-colors">
-                                <ShieldCheck className="w-4.5 h-4.5 text-emerald-400" />
+                            <div className="w-12 h-12 rounded-2xl bg-[#141619] border border-[#2C2E3A] flex items-center justify-center mr-6 group-hover:border-[#0A21C0]/50 transition-all shadow-lg">
+                                <ShieldCheck className="w-5 h-5 text-[#0A21C0]" />
                             </div>
-                            <span className="text-gray-400 text-sm font-medium">Immutable commitment integrity hashes</span>
+                            <span className="text-[#B3B4BD] text-[10px] font-black uppercase tracking-[0.2em]">Immutable Ledger Integrity</span>
                         </div>
                         <div className="flex items-center group">
-                            <div className="w-10 h-10 rounded-lg bg-white/[0.03] border border-white/[0.06] flex items-center justify-center mr-4 group-hover:border-violet-500/20 transition-colors">
-                                <Lock className="w-4.5 h-4.5 text-violet-400" />
+                            <div className="w-12 h-12 rounded-2xl bg-[#141619] border border-[#2C2E3A] flex items-center justify-center mr-6 group-hover:border-[#0A21C0]/50 transition-all shadow-lg">
+                                <Lock className="w-5 h-5 text-[#0A21C0]" />
                             </div>
-                            <span className="text-gray-400 text-sm font-medium">Tamper-proof PDF certificates</span>
+                            <span className="text-[#B3B4BD] text-[10px] font-black uppercase tracking-[0.2em]">Tamper-Proof Certificates</span>
                         </div>
                     </div>
                 </div>
 
-                <div className="relative z-10 text-xs text-gray-600 font-medium">
-                    © {new Date().getFullYear()} PACT Technology
+                <div className="relative z-10 text-[10px] text-[#B3B4BD]/40 font-black uppercase tracking-widest">
+                    © {new Date().getFullYear()} PACT TECHNOLOGY :: SECURED
                 </div>
             </div>
 
             {/* Right — Form */}
-            <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 lg:p-20 relative overflow-hidden border-l border-white/[0.04]">
-                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-indigo-600/[0.04] blur-[120px] rounded-full pointer-events-none"></div>
+            <div className="w-full lg:w-1/2 flex items-center justify-center p-8 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#0A21C0]/5 blur-[150px] rounded-full pointer-events-none"></div>
 
                 <div className="w-full max-w-md animate-fade-in relative z-10">
                     
                     {/* Mobile Logo */}
-                    <div className="lg:hidden flex justify-center mb-10">
-                        <div className="flex items-center">
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mr-1.5 shadow-[0_0_20px_rgba(99,102,241,0.3)]">
-                                <span className="text-white font-bold text-sm">P</span>
-                            </div>
-                            <span className="text-2xl font-bold tracking-tight">ACT</span>
+                    <div className="lg:hidden flex justify-center mb-12">
+                        <div className="flex items-center space-x-1">
+                            <div className="w-1 h-6 bg-[#0A21C0] rounded-full"></div>
+                            <div className="w-1 h-4 bg-[#B3B4BD] rounded-full"></div>
+                            <div className="w-1 h-7 bg-[#0A21C0] rounded-full"></div>
+                            <span className="text-2xl font-black tracking-tighter ml-3 text-white">PACT</span>
                         </div>
                     </div>
 
-                    <div className="mb-10 text-center lg:text-left">
-                        <h2 className="text-3xl font-extrabold tracking-tight text-white mb-2">
-                            {isLogin ? 'Welcome back' : 'Create an account'}
+                    <div className="mb-12 text-center lg:text-left">
+                        <h2 className="text-4xl font-black tracking-tight text-white mb-3 uppercase">
+                            {isLogin ? 'Sign In' : 'Join PACT'}
                         </h2>
-                        <p className="text-gray-500 text-sm font-medium">
-                            {isLogin ? 'Sign in to access your secure dashboard.' : 'Get started with cryptographic agreements.'}
+                        <p className="text-xs text-[#B3B4BD] font-bold uppercase tracking-widest opacity-70">
+                            {isLogin ? 'Access your secure records' : 'Start your immutable journey'}
                         </p>
                     </div>
 
-                    <form className="space-y-5" onSubmit={handleSubmit}>
+                    <form className="space-y-6" onSubmit={handleSubmit}>
                         {!isLogin && (
                             <div className="group">
-                                <label className="block text-xs font-semibold text-gray-500 tracking-wider uppercase mb-2 transition-colors group-focus-within:text-blue-400">Full Name</label>
+                                <label className="block text-[10px] font-black text-[#B3B4BD] uppercase tracking-[0.2em] mb-3 ml-2">Full Name</label>
                                 <div className="relative">
                                     <input
                                         type="text"
                                         required
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
-                                        className="w-full bg-white/[0.03] border border-white/[0.08] text-white rounded-xl px-4 py-3.5 pl-11 focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all font-medium placeholder:text-gray-600"
-                                        placeholder="John Doe"
+                                        className="w-full bg-[#141619] border border-[#2C2E3A] text-white rounded-2xl px-6 py-4 pl-14 focus:outline-none focus:border-[#0A21C0] transition-all font-medium placeholder:text-[#B3B4BD]/20"
+                                        placeholder="Identification Name"
                                     />
-                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <User className="h-4 w-4 text-gray-600 group-focus-within:text-blue-400 transition-colors" />
+                                    <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
+                                        <User className="h-4.5 w-4.5 text-[#B3B4BD]/40 group-focus-within:text-[#0A21C0] transition-colors" />
                                     </div>
                                 </div>
                             </div>
                         )}
 
                         <div className="group">
-                            <label className="block text-xs font-semibold text-gray-500 tracking-wider uppercase mb-2 transition-colors group-focus-within:text-blue-400">Email</label>
+                            <label className="block text-[10px] font-black text-[#B3B4BD] uppercase tracking-[0.2em] mb-3 ml-2">Email Address</label>
                             <div className="relative">
                                 <input
                                     type="email"
                                     required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full bg-white/[0.03] border border-white/[0.08] text-white rounded-xl px-4 py-3.5 pl-11 focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all font-medium placeholder:text-gray-600"
-                                    placeholder="name@example.com"
+                                    className="w-full bg-[#141619] border border-[#2C2E3A] text-white rounded-2xl px-6 py-4 pl-14 focus:outline-none focus:border-[#0A21C0] transition-all font-medium placeholder:text-[#B3B4BD]/20"
+                                    placeholder="name@ledger.com"
                                 />
-                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                    <Mail className="h-4 w-4 text-gray-600 group-focus-within:text-blue-400 transition-colors" />
+                                <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
+                                    <Mail className="h-4.5 w-4.5 text-[#B3B4BD]/40 group-focus-within:text-[#0A21C0] transition-colors" />
                                 </div>
                             </div>
                         </div>
 
                         <div className="group">
-                            <label className="block text-xs font-semibold text-gray-500 tracking-wider uppercase mb-2 transition-colors group-focus-within:text-blue-400">Password</label>
+                            <label className="block text-[10px] font-black text-[#B3B4BD] uppercase tracking-[0.2em] mb-3 ml-2">Access Key</label>
                             <div className="relative">
                                 <input
                                     type="password"
                                     required
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full bg-white/[0.03] border border-white/[0.08] text-white rounded-xl px-4 py-3.5 pl-11 focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all font-medium placeholder:text-gray-600"
+                                    className="w-full bg-[#141619] border border-[#2C2E3A] text-white rounded-2xl px-6 py-4 pl-14 focus:outline-none focus:border-[#0A21C0] transition-all font-medium placeholder:text-[#B3B4BD]/20"
                                     placeholder="••••••••"
                                 />
-                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                    <Key className="h-4 w-4 text-gray-600 group-focus-within:text-blue-400 transition-colors" />
+                                <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
+                                    <Key className="h-4.5 w-4.5 text-[#B3B4BD]/40 group-focus-within:text-[#0A21C0] transition-colors" />
                                 </div>
                             </div>
                         </div>
 
                         {error && (
-                            <div className="flex items-center space-x-2 text-red-400 text-sm bg-red-500/[0.06] p-4 rounded-xl border border-red-500/[0.1] font-medium">
+                            <div className="flex items-center space-x-3 text-red-400 text-[10px] font-black uppercase tracking-widest bg-red-500/5 p-5 rounded-2xl border border-red-500/10">
                                 <ShieldCheck className="w-4 h-4 shrink-0" />
                                 <span>{error}</span>
                             </div>
                         )}
 
-                        <div className="pt-2">
+                        <div className="pt-4">
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="group relative w-full flex justify-center items-center py-4 px-4 rounded-xl font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_30px_rgba(99,102,241,0.2)] hover:shadow-[0_0_40px_rgba(99,102,241,0.4)]"
+                                className="group relative w-full flex justify-center items-center py-4.5 px-6 rounded-2xl font-black text-xs uppercase tracking-[0.2em] text-white bg-[#0A21C0] hover:bg-white hover:text-[#0A21C0] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_40px_rgba(10,33,192,0.3)]"
                             >
                                 {loading ? (
                                     <span className="flex items-center">
-                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
-                                        Authenticating...
+                                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-3"></div>
+                                        Establishing...
                                     </span>
                                 ) : (
                                     <span className="flex items-center">
-                                        {isLogin ? 'Sign in' : 'Create account'}
-                                        <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
+                                        {isLogin ? 'Establish Session' : 'Create Record'}
+                                        <ArrowRight className="ml-3 w-4 h-4 transition-transform group-hover:translate-x-1" />
                                     </span>
                                 )}
                             </button>
                         </div>
                     </form>
 
-                    <div className="mt-8 text-center text-sm font-medium text-gray-500">
-                        {isLogin ? "Don't have an account?" : "Already have an account?"}{' '}
+                    <div className="mt-10 text-center text-[10px] font-black uppercase tracking-widest text-[#B3B4BD]/40">
+                        {isLogin ? "New to the platform?" : "Already verified?"}{' '}
                         <button 
                             onClick={() => { setIsLogin(!isLogin); setError(''); }} 
-                            className="text-blue-400 hover:text-blue-300 transition-colors font-semibold"
+                            className="text-[#0A21C0] hover:text-white transition-colors ml-1 font-black"
                         >
-                            {isLogin ? 'Sign up' : 'Sign in'}
+                            {isLogin ? 'Join PACT' : 'Sign In'}
                         </button>
                     </div>
 

@@ -5,15 +5,15 @@ function createAgreementPDF(agreement) {
     // Certificate Border
     doc.rect(20, 20, doc.page.width - 40, doc.page.height - 40)
        .lineWidth(3)
-       .stroke('#0B3D91');
+       .stroke('#0A21C0');
        
     doc.rect(25, 25, doc.page.width - 50, doc.page.height - 50)
        .lineWidth(1)
-       .stroke('#2563EB');
+       .stroke('#0A21C0');
 
     // Header Title
     doc.moveDown(2);
-    doc.fillColor('#0B3D91').fontSize(32).font('Helvetica-Bold').text('PACT', { align: 'center' });
+    doc.fillColor('#0A21C0').fontSize(32).font('Helvetica-Bold').text('PACT', { align: 'center' });
     doc.fillColor('#666666').fontSize(10).font('Helvetica').text('Predictive AI-Backed Commitment Technology', { align: 'center', characterSpacing: 1 });
     doc.moveDown(1.5);
 
