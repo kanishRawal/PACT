@@ -19,18 +19,23 @@ const agreementRoutes = require('./routes/agreements');
 app.use('/api/auth', authRoutes);
 app.use('/api/agreements', agreementRoutes);
 
-app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
+app.get('/api/health', (req, res) => res.json({ success: true, message: 'API is healthy', data: null }));
 
 const PORT = process.env.PORT || 5000;
 
 // Connect to MongoDB In-Memory Server for Demo
 async function startServer() {
-  const mongoServer = await MongoMemoryServer.create();
-  const mongoUri = mongoServer.getUri();
+  let mongoUri = process.env.MONGODB_URI;
 
-  await mongoose.connect(mongoUri);
-
-  console.log(`Connected to MongoDB (In-Memory) at ${mongoUri}`);
+  if (mongoUri) {
+    await mongoose.connect(mongoUri);
+    console.log(`Connected to Production MongoDB Atlas`);
+  } else {
+    const mongoServer = await MongoMemoryServer.create();
+    mongoUri = mongoServer.getUri();
+    await mongoose.connect(mongoUri);
+    console.log(`Connected to MongoDB (In-Memory) at ${mongoUri}`);
+  }
 
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

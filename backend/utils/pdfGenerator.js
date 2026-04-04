@@ -99,23 +99,28 @@ function createAgreementPDF(agreement) {
     currentY += 70;
 
     // CIH Hash Area
-    doc.rect(leftCol - 10, currentY, doc.page.width - (leftCol * 2) + 20, 70).fillAndStroke('#111827', '#111827');
+    currentY += 10;
+    doc.rect(leftCol - 10, currentY, doc.page.width - (leftCol * 2) + 20, 100).fillAndStroke('#111827', '#111827');
     
     currentY += 15;
-    doc.fontSize(10).font('Helvetica-Bold').fillColor('#9CA3AF').text('COMMITMENT INTEGRITY HASH (CIH)', leftCol, currentY, { align: 'center', width: doc.page.width - leftCol * 2 });
+    doc.fontSize(10).font('Helvetica-Bold').fillColor('#9CA3AF').text('VERIFICATION RECORD (AVID)', leftCol, currentY, { align: 'center', width: doc.page.width - leftCol * 2 });
     currentY += 20;
     
     if (agreement.cihHash) {
-        doc.fontSize(9).font('Courier').fillColor('#10B981').text(agreement.cihHash, leftCol, currentY, { align: 'center', width: doc.page.width - leftCol * 2 });
+        doc.fontSize(8).font('Courier').fillColor('#10B981').text(`Verification ID: ${agreement.cihHash}`, leftCol, currentY, { align: 'center', width: doc.page.width - leftCol * 2 });
+        currentY += 15;
+        doc.fontSize(8).font('Courier').fillColor('#9CA3AF').text(`Device: ${agreement.deviceFingerprint || 'Verified Identity Context'}`, leftCol, currentY, { align: 'center', width: doc.page.width - leftCol * 2 });
+        currentY += 15;
+        doc.fontSize(8).font('Courier').fillColor('#9CA3AF').text(`Time: ${new Date(agreement.updatedAt).toUTCString()}`, leftCol, currentY, { align: 'center', width: doc.page.width - leftCol * 2 });
     } else {
         doc.fontSize(11).font('Helvetica').fillColor('#FCD34D').text('Pending Final Verification', leftCol, currentY, { align: 'center', width: doc.page.width - leftCol * 2 });
     }
 
-    currentY += 80;
+    currentY += 60;
 
     // Footer
     doc.fontSize(12).font('Helvetica-Oblique').fillColor('#6B7280').text(
-        'This agreement was digitally verified and cryptographically stamped using PACT.', 
+        'This agreement was digitally verified and permanently secured using PACT.', 
         leftCol, 
         doc.page.height - 90, 
         { align: 'center', width: doc.page.width - leftCol * 2 }
